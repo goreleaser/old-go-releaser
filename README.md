@@ -33,7 +33,7 @@ Basically, all is done in a very simple `getopts` loop, so, you need to run it
 like this:
 
 ```console
-./release \
+curl -s https://raw.githubusercontent.com/caarlos0/go-releaser/master/release | bash -s -- \
   -u caarlos0 \ # repo owner on github
   -r go-releaser \ # repo name on github
   -b release \ # binary filename
