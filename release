@@ -11,14 +11,15 @@ cleanup() {
 
 # normalize Golang's OS and Arch to uname compatibles
 normalize() {
-  echo "$1" | sed \
-    -e 's/darwin/Darwin/' \
-    -e 's/linux/Linux/' \
-    -e 's/freebsd/FreeBSD/' \
-    -e 's/openbsd/OpenBSD/' \
-    -e 's/netbsd/NetBSD/' \
-    -e 's/386/i386/' \
-    -e 's/amd64/x86_64/'
+  echo "$1" | sed '
+    s/darwin/Darwin/
+    s/linux/Linux/
+    s/freebsd/FreeBSD/
+    s/openbsd/OpenBSD/
+    s/netbsd/NetBSD/
+    s/386/i386/
+    s/amd64/x86_64/
+  '
 }
 
 # builds the binaries with gox
