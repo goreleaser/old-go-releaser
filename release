@@ -33,10 +33,11 @@ build() {
 
 # package the binaries in .tar.gz files
 package() {
+  local folder filename
   echo "Packaging $CURRENT..."
 
   for folder in ./dist/*; do
-    local filename="$(normalize "$folder").tar.gz"
+    filename="$(normalize "$folder").tar.gz"
     cp -rf "$EXTRA_FILES" "$folder"
     cp -rf README* "$folder"
     cp -rf LICENSE* "$folder"
@@ -66,6 +67,7 @@ release() {
 
 # upload all tar.gz files to the previously created release
 upload() {
+  local file
   for file in ./dist/*.tar.gz; do
     echo "--> Uploading $file..."
     github-release upload \
