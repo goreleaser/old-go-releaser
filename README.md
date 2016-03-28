@@ -40,3 +40,18 @@ curl -s https://raw.githubusercontent.com/caarlos0/go-releaser/master/release | 
   -m ./cmd/main.go \ # your main go file
   -e "FILE1 FILE2 FILE3" # optional, extra files you want to add, besides the binary itself with LICENSE* and README*
 ```
+
+For example, in [antibody's](https://github.com/getantibody/antibody)
+circle.yml file I have the following:
+
+```yml
+deployment:
+  release:
+    tag: /v[0-9]+(\.[0-9]+)*/
+    commands:
+      - curl -s https://raw.githubusercontent.com/caarlos0/go-releaser/master/release | bash -s -- -u getantibody -r antibody -b antibody -m ./cmd/antibody/ -e antibody.zsh
+```
+
+You can see the very first release made this way
+[here](https://github.com/getantibody/antibody/releases/tag/v0.4.3) as
+well [the build that created it](https://circleci.com/gh/getantibody/antibody/94).
