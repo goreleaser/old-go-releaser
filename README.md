@@ -53,5 +53,5 @@ deployment:
 ```
 
 You can see the very first release made this way
-[here](https://github.com/getantibody/antibody/releases/tag/v0.4.3) as
-well [the build that created it](https://circleci.com/gh/getantibody/antibody/94).
+[here](https://github.com/getantibody/antibody/releases/tag/v0.4.4) as
+well [the build that created it](https://circleci.com/gh/getantibody/antibody/97).
