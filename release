@@ -1,0 +1,117 @@
+#!/bin/sh
+set -e
+
+# enables go 1.5 vendor expirement
+export GO15VENDOREXPERIMENT=1
+
+# cleanup stuff
+cleanup() {
+  rm -rf dist
+}
+
+# normalize Golang's OS and Arch to uname compatibles
+normalize() {
+  echo "$1" | sed \
+    -e 's/darwin/Darwin/' \
+    -e 's/linux/Linux/' \
+    -e 's/freebsd/FreeBSD/' \
+    -e 's/openbsd/OpenBSD/' \
+    -e 's/netbsd/NetBSD/' \
+    -e 's/386/i386/' \
+    -e 's/amd64/x86_64/'
+}
+
+# builds the binaries with gox
+build() {
+  echo "Building $CURRENT..."
+  go get github.com/mitchellh/gox
+  gox -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}/$BINARY" \
+    -os="linux darwin freebsd openbsd netbsd" \
+    -ldflags="-X main.version $CURRENT" \
+    $MAINGO
+}
+
+# package the binaries in .tar.gz files
+package() {
+  echo "Packaging $CURRENT..."
+  for folder in ./dist/*; do
+    local filename="$(normalize "$folder").tar.gz"
+    tar -cvzf "$filename" "${folder}/$BINARY" "$EXTRA_FILES" README* LICENSE*
+  done
+}
+
+# release it to github
+release() {
+  echo "Releasing $CURRENT..."
+  local log description
+  log="$(git log --pretty=oneline --abbrev-commit "$PREVIOUS".."$CURRENT")"
+  description="${log}\n\nBuilt with: $(go version)"
+  go get github.com/aktau/github-release
+  echo "Creating release $CURRENT..."
+  github-release release \
+    --user "$OWNER" \
+    --repo $REPO \
+    --tag "$CURRENT" \
+    --description "$description" \
+    --pre-release ||
+    github-release edit \
+      --user "$OWNER" \
+      --repo $REPO \
+      --tag "$CURRENT" \
+      --description "$description" \
+      --pre-release
+}
+
+# upload all tar.gz files to the previously created release
+upload() {
+  for file in ./dist/*.tar.gz; do
+    echo "--> Uploading $file..."
+    github-release upload \
+      --user "$OWNER" \
+      --repo $REPO \
+      --tag "$CURRENT" \
+      --name "$(echo $file | sed 's/\.\/dist\///')" \
+      --file "$file"
+  done
+}
+
+parse_options() {
+  OPTIND=1
+  while getopts ":u:r:b:m:e:" opt; do
+    case "$opt" in
+      u)
+        OWNER="$OPTARG"
+        ;;
+      r)
+        REPO="$OPTARG"
+        ;;
+      b)
+        BINARY="$OPTARG"
+        ;;
+      m)
+        MAINGO="$OPTARG"
+        ;;
+      e)
+        EXTRA_FILES="$OPTARG"
+        ;;
+      \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+    esac
+  done
+
+  test -z "$OWNER$REPO$BINARY$MAINGO" && {
+    echo "Invalid usage." >&2
+    exit 1
+  }
+}
+
+parse_options
+cleanup
+CURRENT="$(git describe --tags --abbrev=0)"
+PREVIOUS=$(git describe --tags --abbrev=0 ${CURRENT}^)
+build
+package
+release
+upload
