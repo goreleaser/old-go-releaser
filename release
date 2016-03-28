@@ -34,9 +34,13 @@ build() {
 # package the binaries in .tar.gz files
 package() {
   echo "Packaging $CURRENT..."
+
   for folder in ./dist/*; do
     local filename="$(normalize "$folder").tar.gz"
-    tar -cvzf "$filename" "${folder}/$BINARY" "$EXTRA_FILES" README* LICENSE*
+    cp -rf "$EXTRA_FILES" "$folder"
+    cp -rf README* "$folder"
+    cp -rf LICENSE* "$folder"
+    tar -cvzf "$filename" --directory="$folder" .
   done
 }
 
