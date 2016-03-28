@@ -72,7 +72,7 @@ upload() {
       --user "$OWNER" \
       --repo $REPO \
       --tag "$CURRENT" \
-      --name "$(echo $file | sed 's/\.\/dist\///')" \
+      --name "$(echo $file | sed 's:\./dist/::')" \
       --file "$file"
   done
 }
