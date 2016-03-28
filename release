@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# enables go 1.5 vendor expirement
+# enables go 1.5 vendor experiment
 export GO15VENDOREXPERIMENT=1
 
 # cleanup stuff
