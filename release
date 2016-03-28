@@ -52,14 +52,12 @@ release() {
     --user "$OWNER" \
     --repo $REPO \
     --tag "$CURRENT" \
-    --description "$description" \
-    --pre-release ||
-    github-release edit \
-      --user "$OWNER" \
-      --repo $REPO \
-      --tag "$CURRENT" \
-      --description "$description" \
-      --pre-release
+    --description "$description" ||
+      github-release edit \
+        --user "$OWNER" \
+        --repo $REPO \
+        --tag "$CURRENT" \
+        --description "$description"
 }
 
 # upload all tar.gz files to the previously created release
@@ -75,39 +73,35 @@ upload() {
   done
 }
 
-parse_options() {
-  OPTIND=1
-  while getopts ":u:r:b:m:e:" opt; do
-    case "$opt" in
-      u)
-        OWNER="$OPTARG"
-        ;;
-      r)
-        REPO="$OPTARG"
-        ;;
-      b)
-        BINARY="$OPTARG"
-        ;;
-      m)
-        MAINGO="$OPTARG"
-        ;;
-      e)
-        EXTRA_FILES="$OPTARG"
-        ;;
-      \?)
-        echo "Invalid option: -$OPTARG" >&2
-        exit 1
-        ;;
-    esac
-  done
+OPTIND=1
+while getopts ":u:r:b:m:e:" opt; do
+  case "$opt" in
+    u)
+      OWNER="$OPTARG"
+      ;;
+    r)
+      REPO="$OPTARG"
+      ;;
+    b)
+      BINARY="$OPTARG"
+      ;;
+    m)
+      MAINGO="$OPTARG"
+      ;;
+    e)
+      EXTRA_FILES="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
 
-  test -z "$OWNER$REPO$BINARY$MAINGO" && {
-    echo "Invalid usage." >&2
-    exit 1
-  }
+test -z "$OWNER$REPO$BINARY$MAINGO" && {
+  echo "Invalid usage." >&2
+  exit 1
 }
-
-parse_options
 cleanup
 CURRENT="$(git describe --tags --abbrev=0)"
 PREVIOUS=$(git describe --tags --abbrev=0 ${CURRENT}^)

@@ -24,7 +24,8 @@ in order to use it.
 1. Go 1.5 or higher;
 2. No Windows support - I just don't care;
 3. `main.version` ldflag - it's useful to the users;
-4. It has a `README*` and `LICENSE*` files - because of the users, again.
+4. It has a `README*` and `LICENSE*` files - because of the users, again;
+5. The `dist` folder should not contain anything important.
 
 ## Usage
 
