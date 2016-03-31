@@ -42,7 +42,7 @@ curl -s https://raw.githubusercontent.com/caarlos0/go-releaser/master/release | 
 ```
 
 For example, in [antibody's](https://github.com/getantibody/antibody)
-circle.yml file I have the following:
+`circle.yml` file I have the following:
 
 ```yml
 deployment:
