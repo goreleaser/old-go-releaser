@@ -27,7 +27,7 @@ build() {
   go get github.com/mitchellh/gox
   gox -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}/$BINARY" \
     -os="linux darwin freebsd openbsd netbsd" \
-    -ldflags="-X main.version $CURRENT" \
+    -ldflags="-X main.version=$CURRENT" \
     $MAINGO
 }
 
@@ -38,7 +38,7 @@ package() {
 
   for folder in ./dist/*; do
     filename="$(normalize "$folder").tar.gz"
-    cp -rf "$EXTRA_FILES" "$folder"
+    test -n "$EXTRA_FILES" && cp -rf "$EXTRA_FILES" "$folder"
     cp -rf README* "$folder"
     cp -rf LICENSE* "$folder"
     tar -cvzf "$filename" --directory="$folder" .
