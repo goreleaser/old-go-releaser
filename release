@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 
 # enables go 1.5 vendor experiment
 export GO15VENDOREXPERIMENT=1
