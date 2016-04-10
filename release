@@ -28,11 +28,12 @@ build() {
   gox -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}/$BINARY" \
     -os="linux darwin freebsd openbsd netbsd" \
     -ldflags="-X main.version=$CURRENT" \
-    $MAINGO
+    "$MAINGO"
 }
 
 # package the binaries in .tar.gz files
 package() {
+  # shellcheck disable=SC2039
   local folder filename
   echo "Packaging $CURRENT..."
 
@@ -48,6 +49,7 @@ package() {
 # release it to github
 release() {
   echo "Releasing $CURRENT..."
+  # shellcheck disable=SC2039
   local log description
   log="$(git log --pretty=oneline --abbrev-commit "$PREVIOUS".."$CURRENT")"
   description="${log}\n\nBuilt with: $(go version)"
@@ -55,26 +57,27 @@ release() {
   echo "Creating release $CURRENT..."
   github-release release \
     --user "$OWNER" \
-    --repo $REPO \
+    --repo "$REPO" \
     --tag "$CURRENT" \
     --description "$description" ||
       github-release edit \
         --user "$OWNER" \
-        --repo $REPO \
+        --repo "$REPO" \
         --tag "$CURRENT" \
         --description "$description"
 }
 
 # upload all tar.gz files to the previously created release
 upload() {
+  # shellcheck disable=SC2039
   local file
   for file in ./dist/*.tar.gz; do
     echo "--> Uploading $file..."
     github-release upload \
       --user "$OWNER" \
-      --repo $REPO \
+      --repo "$REPO" \
       --tag "$CURRENT" \
-      --name "$(echo $file | sed 's:\./dist/::')" \
+      --name "$(echo "$file" | sed 's:\./dist/::')" \
       --file "$file"
   done
 }
@@ -110,7 +113,7 @@ test -z "$OWNER$REPO$BINARY$MAINGO" && {
 }
 cleanup
 CURRENT="$(git describe --tags --abbrev=0)"
-PREVIOUS=$(git describe --tags --abbrev=0 ${CURRENT}^)
+PREVIOUS=$(git describe --tags --abbrev=0 "$CURRENT"^)
 build
 package
 release
