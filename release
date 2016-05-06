@@ -52,7 +52,7 @@ release() {
   # shellcheck disable=SC2039
   local log description
   log="$(git log --pretty=oneline --abbrev-commit "$PREVIOUS".."$CURRENT")"
-  description="${log}\n\nBuilt with: $(go version)"
+  description="$(printf '%s\n\n%s' "$log" "Built with: $(go version) and caarlos0/go-releaser")"
   go get github.com/aktau/github-release
   echo "Creating release $CURRENT..."
   github-release release \
