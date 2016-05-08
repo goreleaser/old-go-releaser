@@ -107,8 +107,20 @@ while getopts ":u:r:b:m:e:" opt; do
   esac
 done
 
-test -z "$OWNER$REPO$BINARY$MAINGO" && {
-  echo "Invalid usage." >&2
+test -z "$OWNER" && {
+  echo "Missing owner (-u ownername)" >&2
+  exit 1
+}
+test -z "$REPO" && {
+  echo "Missing repository (-r reponame)" >&2
+  exit 1
+}
+test -z "$BINARY" && {
+  echo "Missing binary (-b binaryname)" >&2
+  exit 1
+}
+test -z "$MAINGO" && {
+  echo "Missing main.go file (-m path/to/main.go/folder)" >&2
   exit 1
 }
 cleanup
