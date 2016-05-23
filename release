@@ -27,6 +27,7 @@ build() {
   go get github.com/mitchellh/gox
   gox -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}/$BINARY" \
     -os="linux darwin freebsd openbsd netbsd" \
+    -arch="amd64 386"
     -ldflags="-s -w -X main.version=$CURRENT" \
     "$MAINGO"
 }
