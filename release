@@ -24,12 +24,14 @@ normalize() {
 # builds the binaries with gox
 build() {
   echo "Building $CURRENT..."
-  go get github.com/mitchellh/gox
-  gox -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}/$BINARY" \
-    -os="linux darwin freebsd openbsd netbsd" \
-    -arch="amd64 386" \
-    -ldflags="-s -w -X main.version=$CURRENT" \
-    "$MAINGO"
+  for os in linux darwin; do
+    for arch in amd64 386; do
+      echo "  -> Building for $os on $arch..."
+      GOOS="$os" GOARCH="$arch" go build \
+        -ldflags="-s -w -X main.version=$CURRENT" \
+        -o "dist/${BINARY}_${os}_${arch}/$BINARY" "$MAINGO"
+    done
+  done
 }
 
 # package the binaries in .tar.gz files
@@ -54,7 +56,7 @@ release() {
   local log description
   log="$(git log --pretty=oneline --abbrev-commit "$PREVIOUS".."$CURRENT")"
   description="$(printf '%s\n\n%s' "$log" "Built with: $(go version) and caarlos0/go-releaser")"
-  go get github.com/aktau/github-release
+  go get -u -v github.com/aktau/github-release
   echo "Creating release $CURRENT..."
   github-release release \
     --user "$OWNER" \
