@@ -173,7 +173,7 @@ test -z "$MAINGO" && {
 
 cleanup
 CURRENT="$(git describe --tags --abbrev=0)"
-PREVIOUS=$(git describe --tags --abbrev=0 "$CURRENT"^)
+PREVIOUS=$(git describe --tags --abbrev=0 --always "$CURRENT"^)
 build
 package
 release
